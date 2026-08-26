@@ -1,4 +1,4 @@
-// FitAI Smart Profile & AI Personalization Settings View
+// Fit AI App Profile & AI Personalization Settings View
 import { store, DEMO_PRESETS } from '../state.js';
 import { sound } from '../utils/audio.js';
 import { startTutorial } from './tutorial.js';

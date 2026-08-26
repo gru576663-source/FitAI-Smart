@@ -1,4 +1,4 @@
-// FitAI Smart Main Application Controller & Router
+// Fit AI App Main Application Controller & Router
 import { store } from './state.js';
 import { renderAuthView } from './auth.js';
 import { renderQuizView } from './quiz.js';
@@ -19,23 +19,25 @@ function initApp() {
   document.documentElement.setAttribute('data-theme', initialState.theme || 'dark');
 
   // Main render loop based on state
+  // Flow Order: 1. Login & Signup -> 2. Personalization Quiz -> 3. Home Dashboard
   function render() {
     const state = store.getState();
     const authMode = store.getAuthMode();
     const currentTab = store.getTab();
 
-    // Check if user is logged in & completed quiz
+    // 1. If not logged in, render Login & Signup Page
     if (!state.isLoggedIn) {
       renderAuthView(root);
       return;
     }
 
+    // 2. If logged in but quiz not completed, render Personalization Quiz
     if (authMode === 'quiz' || (!state.hasCompletedQuiz && authMode !== 'app')) {
       renderQuizView(root);
       return;
     }
 
-    // Render Full Main App Shell with Top Bar, Main Content View, and Bottom Tab Bar
+    // 3. Render Full Main App Shell (Home Page / Advisor Dashboard)
     root.innerHTML = `
       <div class="min-h-screen flex flex-col justify-between max-w-5xl mx-auto px-3 sm:px-6 relative">
         
@@ -49,7 +51,7 @@ function initApp() {
             </div>
             <div>
               <span class="text-base sm:text-lg font-black tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-                FitAI Smart
+                Fit AI App
               </span>
               <span class="hidden sm:inline-block ml-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">AI ADVISOR</span>
             </div>
@@ -74,12 +76,12 @@ function initApp() {
           </div>
         </header>
 
-        <!-- Main Viewport Router Container -->
+        <!-- Main Viewport Router Container (Default: 3. Home Page) -->
         <main id="tab-viewport" class="flex-1 py-4 sm:py-6">
           <!-- Dynamically populated by sub-components -->
         </main>
 
-        <!-- Bottom Tab Navigation Bar (Fixed on mobile & sleek on desktop) -->
+        <!-- Bottom Tab Navigation Bar -->
         <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/90 border-t border-slate-800/80 backdrop-blur-xl py-2 px-3">
           <div class="max-w-md mx-auto flex items-center justify-around">
             
@@ -121,7 +123,7 @@ function initApp() {
       </div>
     `;
 
-    // Render active tab view
+    // Render active tab view (Default is 3. Home Page)
     const viewport = root.querySelector('#tab-viewport');
     if (viewport) {
       if (currentTab === 'home') renderHomeView(viewport);

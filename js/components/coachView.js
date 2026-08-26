@@ -1,4 +1,4 @@
-// FitAI Smart AI Coach & Real-Time Conversational Assistant
+// Fit AI App AI Coach & Real-Time Conversational Assistant
 import { store } from '../state.js';
 import { AI_ENGINE } from '../aiEngine.js';
 import { sound } from '../utils/audio.js';
@@ -27,7 +27,7 @@ export function renderCoachView(container) {
 
           <div>
             <div class="flex items-center gap-2">
-              <h2 class="text-sm font-extrabold text-white">FitAI Smart AI Coach</h2>
+              <h2 class="text-sm font-extrabold text-white">Fit AI Coach</h2>
               <span class="text-[10px] font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">ONLINE</span>
             </div>
             <p class="text-[11px] text-slate-400">Personalized to: <strong class="text-slate-300">${profile.name} (${profile.primaryGoal.replace('_', ' ')})</strong></p>

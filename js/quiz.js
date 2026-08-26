@@ -1,6 +1,7 @@
-// FitAI Smart 6-Step Personalization Quiz Wizard
+// Fit AI App 6-Step Personalization Quiz Wizard
 import { store } from './state.js';
 import { calculateMetabolicTargets } from './utils/helpers.js';
+import { sound } from './utils/audio.js';
 
 let currentQuizStep = 1;
 const TOTAL_STEPS = 6;
@@ -10,7 +11,7 @@ let quizData = {
   age: 26,
   gender: 'male',
   heightCm: 178,
-  weightKg: 75,
+  weightKg: 74,
   heightUnit: 'cm',
   weightUnit: 'kg',
   primaryGoal: 'muscle',
@@ -41,17 +42,17 @@ export function renderQuizView(container) {
           <div class="text-center mb-4">
             <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Step 1 of 6</span>
             <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-2">Your Biometrics</h2>
-            <p class="text-xs text-slate-400">Used by AI to calibrate your Basal Metabolic Rate (BMR) and daily energy expenditure.</p>
+            <p class="text-xs text-slate-400">Used by Fit AI to calibrate your Basal Metabolic Rate (BMR) and daily energy expenditure.</p>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1">Age</label>
-              <input type="number" id="quiz-age" min="14" max="99" value="${quizData.age || 26}" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-bold text-center focus:border-emerald-500 focus:outline-none">
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Age (Years)</label>
+              <input type="number" id="quiz-age" min="14" max="99" value="${quizData.age || 26}" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-bold text-center text-base focus:border-emerald-500 focus:outline-none transition">
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1">Gender Identity</label>
-              <select id="quiz-gender" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-emerald-500 focus:outline-none">
+              <select id="quiz-gender" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:border-emerald-500 focus:outline-none transition font-medium">
                 <option value="male" ${quizData.gender === 'male' ? 'selected' : ''}>Male</option>
                 <option value="female" ${quizData.gender === 'female' ? 'selected' : ''}>Female</option>
                 <option value="other" ${quizData.gender === 'other' ? 'selected' : ''}>Non-binary / Other</option>
@@ -59,21 +60,31 @@ export function renderQuizView(container) {
             </div>
           </div>
 
-          <div class="space-y-3">
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <label class="text-xs font-semibold text-slate-300">Height (${quizData.heightUnit})</label>
-                <span class="text-xs text-emerald-400 font-mono" id="height-val-display">${quizData.heightCm} cm</span>
+          <div class="space-y-4 pt-1">
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-xs font-semibold text-slate-300">Height</label>
+                <span class="text-sm text-emerald-400 font-mono font-bold" id="height-val-display">${quizData.heightCm} cm</span>
               </div>
-              <input type="range" id="quiz-height" min="140" max="220" value="${quizData.heightCm}" class="w-full accent-emerald-500 h-2 bg-slate-800 rounded-lg cursor-pointer">
+              <input type="range" id="quiz-height" min="130" max="220" value="${quizData.heightCm}" class="w-full accent-emerald-500 h-2 bg-slate-800 rounded-lg cursor-pointer">
+              <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+                <span>130 cm</span>
+                <span>175 cm</span>
+                <span>220 cm</span>
+              </div>
             </div>
 
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <label class="text-xs font-semibold text-slate-300">Weight (${quizData.weightUnit})</label>
-                <span class="text-xs text-emerald-400 font-mono" id="weight-val-display">${quizData.weightKg} kg</span>
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-xs font-semibold text-slate-300">Weight</label>
+                <span class="text-sm text-emerald-400 font-mono font-bold" id="weight-val-display">${quizData.weightKg} kg</span>
               </div>
-              <input type="range" id="quiz-weight" min="40" max="150" value="${quizData.weightKg}" class="w-full accent-emerald-500 h-2 bg-slate-800 rounded-lg cursor-pointer">
+              <input type="range" id="quiz-weight" min="40" max="160" value="${quizData.weightKg}" class="w-full accent-emerald-500 h-2 bg-slate-800 rounded-lg cursor-pointer">
+              <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+                <span>40 kg</span>
+                <span>75 kg</span>
+                <span>160 kg</span>
+              </div>
             </div>
           </div>
         </div>
@@ -92,22 +103,25 @@ export function renderQuizView(container) {
           <div class="text-center mb-3">
             <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Step 2 of 6</span>
             <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-2">Primary Fitness Goal</h2>
-            <p class="text-xs text-slate-400">The AI adapts both routine intensity and macro ratios to this target.</p>
+            <p class="text-xs text-slate-400">Select an option below to calibrate workout routines and macro ratios.</p>
           </div>
 
           <div class="space-y-2.5" id="goal-options">
-            ${goals.map(g => `
-              <div class="custom-option-card p-4 rounded-xl border bg-slate-900/80 flex items-center gap-3.5 ${quizData.primaryGoal === g.id ? 'selected' : 'border-slate-800'}" data-value="${g.id}" onclick="selectGoal('${g.id}')">
-                <span class="text-2xl">${g.icon}</span>
-                <div class="flex-1">
-                  <h4 class="text-sm font-bold text-white">${g.title}</h4>
-                  <p class="text-xs text-slate-400 leading-snug">${g.desc}</p>
+            ${goals.map(g => {
+              const isSelected = quizData.primaryGoal === g.id;
+              return `
+                <div class="custom-option-card p-4 rounded-xl border flex items-center gap-3.5 transition cursor-pointer ${isSelected ? 'border-emerald-500 bg-emerald-500/15 shadow-md shadow-emerald-500/10' : 'border-slate-800 bg-slate-900/80 hover:border-slate-700'}" data-type="goal" data-value="${g.id}">
+                  <span class="text-2xl">${g.icon}</span>
+                  <div class="flex-1">
+                    <h4 class="text-sm font-bold ${isSelected ? 'text-emerald-300' : 'text-white'}">${g.title}</h4>
+                    <p class="text-xs text-slate-400 leading-snug">${g.desc}</p>
+                  </div>
+                  <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center font-bold text-xs ${isSelected ? 'border-emerald-400 bg-emerald-500 text-slate-950 shadow-sm' : 'border-slate-700 text-transparent'}">
+                    ✓
+                  </div>
                 </div>
-                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center ${quizData.primaryGoal === g.id ? 'border-emerald-400 bg-emerald-500 text-slate-950' : 'border-slate-700'}">
-                  ${quizData.primaryGoal === g.id ? '✓' : ''}
-                </div>
-              </div>
-            `).join('')}
+              `;
+            }).join('')}
           </div>
         </div>
       `;
@@ -126,19 +140,25 @@ export function renderQuizView(container) {
           <div class="text-center mb-3">
             <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Step 3 of 6</span>
             <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-2">Current Activity Level</h2>
-            <p class="text-xs text-slate-400">Helps the AI calculate your real Total Daily Energy Expenditure (TDEE).</p>
+            <p class="text-xs text-slate-400">Select your typical physical activity to calculate your real Total Daily Energy Expenditure (TDEE).</p>
           </div>
 
           <div class="space-y-2" id="activity-options">
-            ${levels.map(lvl => `
-              <div class="custom-option-card p-3 rounded-xl border bg-slate-900/80 flex items-center gap-3 ${quizData.activityLevel === lvl.id ? 'selected' : 'border-slate-800'}" data-value="${lvl.id}">
-                <span class="text-xl">${lvl.icon}</span>
-                <div class="flex-1">
-                  <h4 class="text-xs font-bold text-white">${lvl.title}</h4>
-                  <p class="text-[11px] text-slate-400 leading-tight">${lvl.desc}</p>
+            ${levels.map(lvl => {
+              const isSelected = quizData.activityLevel === lvl.id;
+              return `
+                <div class="custom-option-card p-3.5 rounded-xl border flex items-center gap-3 transition cursor-pointer ${isSelected ? 'border-emerald-500 bg-emerald-500/15 shadow-md shadow-emerald-500/10' : 'border-slate-800 bg-slate-900/80 hover:border-slate-700'}" data-type="activity" data-value="${lvl.id}">
+                  <span class="text-xl">${lvl.icon}</span>
+                  <div class="flex-1">
+                    <h4 class="text-xs sm:text-sm font-bold ${isSelected ? 'text-emerald-300' : 'text-white'}">${lvl.title}</h4>
+                    <p class="text-[11px] text-slate-400 leading-tight">${lvl.desc}</p>
+                  </div>
+                  <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center font-bold text-[10px] ${isSelected ? 'border-emerald-400 bg-emerald-500 text-slate-950' : 'border-slate-700 text-transparent'}">
+                    ✓
+                  </div>
                 </div>
-              </div>
-            `).join('')}
+              `;
+            }).join('')}
           </div>
         </div>
       `;
@@ -156,30 +176,36 @@ export function renderQuizView(container) {
           <div class="text-center mb-3">
             <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Step 4 of 6</span>
             <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-2">Available Equipment</h2>
-            <p class="text-xs text-slate-400">AI routines will only use gear you actually have access to.</p>
+            <p class="text-xs text-slate-400">Select which gear you have available. AI routines will tailor only to these options.</p>
           </div>
 
           <div class="space-y-2.5" id="equipment-options">
-            ${eqList.map(eq => `
-              <div class="custom-option-card p-3.5 rounded-xl border bg-slate-900/80 flex items-center gap-3.5 ${quizData.equipmentAvailable === eq.id ? 'selected' : 'border-slate-800'}" data-value="${eq.id}">
-                <span class="text-2xl">${eq.icon}</span>
-                <div class="flex-1">
-                  <h4 class="text-sm font-bold text-white">${eq.title}</h4>
-                  <p class="text-xs text-slate-400">${eq.desc}</p>
+            ${eqList.map(eq => {
+              const isSelected = quizData.equipmentAvailable === eq.id;
+              return `
+                <div class="custom-option-card p-3.5 rounded-xl border flex items-center gap-3.5 transition cursor-pointer ${isSelected ? 'border-emerald-500 bg-emerald-500/15 shadow-md shadow-emerald-500/10' : 'border-slate-800 bg-slate-900/80 hover:border-slate-700'}" data-type="equipment" data-value="${eq.id}">
+                  <span class="text-2xl">${eq.icon}</span>
+                  <div class="flex-1">
+                    <h4 class="text-sm font-bold ${isSelected ? 'text-emerald-300' : 'text-white'}">${eq.title}</h4>
+                    <p class="text-xs text-slate-400">${eq.desc}</p>
+                  </div>
+                  <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center font-bold text-xs ${isSelected ? 'border-emerald-400 bg-emerald-500 text-slate-950' : 'border-slate-700 text-transparent'}">
+                    ✓
+                  </div>
                 </div>
-              </div>
-            `).join('')}
+              `;
+            }).join('')}
           </div>
         </div>
       `;
     } else if (currentQuizStep === 5) {
       // Step 5: Dietary Preferences & Restrictions
       const diets = [
-        { id: 'high_protein', title: 'High Protein / Lean Clean', icon: '🥩' },
-        { id: 'balanced', title: 'Balanced Whole Foods', icon: '🥗' },
-        { id: 'mediterranean', title: 'Mediterranean (Fish, Olive Oil, Greens)', icon: '🐟' },
-        { id: 'vegan', title: 'Plant-Based / Vegan', icon: '🌱' },
-        { id: 'keto', title: 'Keto / Low-Carb High-Fat', icon: '🥑' }
+        { id: 'high_protein', title: 'High Protein / Lean Clean', icon: '🥩', desc: 'Focus on muscle repair & high satiety' },
+        { id: 'balanced', title: 'Balanced Whole Foods', icon: '🥗', desc: 'Clean whole grains, lean proteins & vegetables' },
+        { id: 'mediterranean', title: 'Mediterranean', icon: '🐟', desc: 'Rich in wild fish, olive oil & antioxidant greens' },
+        { id: 'vegan', title: 'Plant-Based / Vegan', icon: '🌱', desc: '100% plant sources with complete amino splits' },
+        { id: 'keto', title: 'Keto / Low-Carb High-Fat', icon: '🥑', desc: 'Nutritional ketosis for steady energy' }
       ];
 
       const allergiesList = [
@@ -194,29 +220,39 @@ export function renderQuizView(container) {
           <div class="text-center mb-2">
             <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Step 5 of 6</span>
             <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-2">Diet & Preferences</h2>
-            <p class="text-xs text-slate-400">Meal recommendations will be fully calibrated to these guidelines.</p>
+            <p class="text-xs text-slate-400">Select your nutrition style and dietary restrictions.</p>
           </div>
 
-          <div class="space-y-1.5" id="diet-options">
+          <div class="space-y-2" id="diet-options">
             <label class="block text-xs font-semibold text-slate-300">Nutrition Style</label>
-            <div class="grid grid-cols-1 gap-1.5">
-              ${diets.map(d => `
-                <div class="custom-option-card p-2.5 rounded-xl border bg-slate-900/80 flex items-center gap-2.5 ${quizData.dietaryStyle === d.id ? 'selected' : 'border-slate-800'}" data-value="${d.id}">
-                  <span>${d.icon}</span>
-                  <span class="text-xs font-bold text-white">${d.title}</span>
-                </div>
-              `).join('')}
+            <div class="grid grid-cols-1 gap-2">
+              ${diets.map(d => {
+                const isSelected = quizData.dietaryStyle === d.id;
+                return `
+                  <div class="custom-option-card p-3 rounded-xl border flex items-center gap-3 transition cursor-pointer ${isSelected ? 'border-emerald-500 bg-emerald-500/15 shadow-md shadow-emerald-500/10' : 'border-slate-800 bg-slate-900/80 hover:border-slate-700'}" data-type="diet" data-value="${d.id}">
+                    <span class="text-xl">${d.icon}</span>
+                    <div class="flex-1">
+                      <h4 class="text-xs font-bold ${isSelected ? 'text-emerald-300' : 'text-white'}">${d.title}</h4>
+                      <p class="text-[11px] text-slate-400">${d.desc}</p>
+                    </div>
+                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center font-bold text-[10px] ${isSelected ? 'border-emerald-400 bg-emerald-500 text-slate-950' : 'border-slate-700 text-transparent'}">
+                      ✓
+                    </div>
+                  </div>
+                `;
+              }).join('')}
             </div>
           </div>
 
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Allergies & Restrictions (Select all that apply)</label>
+          <div class="pt-1">
+            <label class="block text-xs font-semibold text-slate-300 mb-2">Allergies & Restrictions (Tap to toggle)</label>
             <div class="flex flex-wrap gap-2" id="allergies-chips">
               ${allergiesList.map(al => {
                 const isSelected = quizData.allergies?.includes(al.id);
                 return `
-                  <button type="button" class="allergy-chip px-3 py-1.5 rounded-lg text-xs font-medium border transition ${isSelected ? 'bg-emerald-500 text-slate-950 border-emerald-400 font-bold' : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'}" data-id="${al.id}">
-                    ${isSelected ? '✓ ' : '+ '}${al.label}
+                  <button type="button" class="allergy-chip px-3.5 py-2 rounded-xl text-xs font-semibold border transition flex items-center gap-1.5 ${isSelected ? 'bg-emerald-500 text-slate-950 border-emerald-400 font-bold shadow-md shadow-emerald-500/20' : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'}" data-id="${al.id}">
+                    <span>${isSelected ? '✓' : '+'}</span>
+                    <span>${al.label}</span>
                   </button>
                 `;
               }).join('')}
@@ -238,19 +274,25 @@ export function renderQuizView(container) {
           <div class="text-center mb-3">
             <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Step 6 of 6</span>
             <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-2">Peak Energy Window</h2>
-            <p class="text-xs text-slate-400">When does your body feel most energized for physical output?</p>
+            <p class="text-xs text-slate-400">Select when your body feels most primed for workouts and optimal meal timing.</p>
           </div>
 
           <div class="space-y-2.5" id="energy-options">
-            ${windows.map(w => `
-              <div class="custom-option-card p-3.5 rounded-xl border bg-slate-900/80 flex items-center gap-3.5 ${quizData.peakEnergyWindow === w.id ? 'selected' : 'border-slate-800'}" data-value="${w.id}">
-                <span class="text-2xl">${w.icon}</span>
-                <div class="flex-1">
-                  <h4 class="text-xs sm:text-sm font-bold text-white">${w.title}</h4>
-                  <p class="text-[11px] sm:text-xs text-slate-400 leading-tight">${w.desc}</p>
+            ${windows.map(w => {
+              const isSelected = quizData.peakEnergyWindow === w.id;
+              return `
+                <div class="custom-option-card p-3.5 rounded-xl border flex items-center gap-3.5 transition cursor-pointer ${isSelected ? 'border-emerald-500 bg-emerald-500/15 shadow-md shadow-emerald-500/10' : 'border-slate-800 bg-slate-900/80 hover:border-slate-700'}" data-type="energy" data-value="${w.id}">
+                  <span class="text-2xl">${w.icon}</span>
+                  <div class="flex-1">
+                    <h4 class="text-xs sm:text-sm font-bold ${isSelected ? 'text-emerald-300' : 'text-white'}">${w.title}</h4>
+                    <p class="text-[11px] sm:text-xs text-slate-400 leading-tight">${w.desc}</p>
+                  </div>
+                  <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center font-bold text-xs ${isSelected ? 'border-emerald-400 bg-emerald-500 text-slate-950' : 'border-slate-700 text-transparent'}">
+                    ✓
+                  </div>
                 </div>
-              </div>
-            `).join('')}
+              `;
+            }).join('')}
           </div>
         </div>
       `;
@@ -267,8 +309,8 @@ export function renderQuizView(container) {
           <!-- Top Step Progress Bar -->
           <div class="mb-6">
             <div class="flex justify-between items-center text-xs font-semibold text-slate-400 mb-2">
-              <span>Personalization Quiz</span>
-              <span class="text-emerald-400 font-mono">${progressPercent}%</span>
+              <span class="text-white font-bold">Fit AI Personalization Quiz</span>
+              <span class="text-emerald-400 font-mono font-bold">${progressPercent}%</span>
             </div>
             <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
               <div class="h-full bg-gradient-to-r from-emerald-500 to-cyan-400 transition-all duration-300" style="width: ${progressPercent}%;"></div>
@@ -280,7 +322,7 @@ export function renderQuizView(container) {
             ${stepHtml}
           </div>
 
-          <!-- Bottom Action Buttons -->
+          <!-- Bottom Action Buttons (Flow: 1. Login -> 2. Quiz -> 3. Home) -->
           <div class="flex items-center gap-3 mt-8 pt-4 border-t border-slate-800/80">
             ${currentQuizStep > 1 ? `
               <button id="btn-quiz-prev" class="px-4 py-3 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 hover:text-white text-xs font-bold transition">
@@ -289,7 +331,7 @@ export function renderQuizView(container) {
             ` : ''}
 
             <button id="btn-quiz-next" class="flex-1 py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/25 transition active:scale-[0.98]">
-              ${currentQuizStep === TOTAL_STEPS ? '⚡ Generate AI Plan' : 'Continue →'}
+              ${currentQuizStep === TOTAL_STEPS ? '⚡ Generate AI Plan & Go to Home →' : 'Continue →'}
             </button>
           </div>
 
@@ -313,7 +355,7 @@ export function renderQuizView(container) {
       const heightDisplay = container.querySelector('#height-val-display');
       const weightDisplay = container.querySelector('#weight-val-display');
 
-      ageInput?.addEventListener('input', (e) => { quizData.age = Number(e.target.value); });
+      ageInput?.addEventListener('input', (e) => { quizData.age = Number(e.target.value) || 26; });
       genderSelect?.addEventListener('change', (e) => { quizData.gender = e.target.value; });
       heightRange?.addEventListener('input', (e) => {
         quizData.heightCm = Number(e.target.value);
@@ -328,23 +370,27 @@ export function renderQuizView(container) {
     // Option cards selection for steps 2, 3, 4, 5, 6
     container.querySelectorAll('.custom-option-card').forEach(card => {
       card.addEventListener('click', () => {
+        sound.playTap();
+        const type = card.getAttribute('data-type');
         const val = card.getAttribute('data-value');
-        if (currentQuizStep === 2) quizData.primaryGoal = val;
-        if (currentQuizStep === 3) quizData.activityLevel = val;
-        if (currentQuizStep === 4) quizData.equipmentAvailable = val;
-        if (currentQuizStep === 5) quizData.dietaryStyle = val;
-        if (currentQuizStep === 6) quizData.peakEnergyWindow = val;
 
-        container.querySelectorAll('.custom-option-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
+        if (type === 'goal') quizData.primaryGoal = val;
+        if (type === 'activity') quizData.activityLevel = val;
+        if (type === 'equipment') quizData.equipmentAvailable = val;
+        if (type === 'diet') quizData.dietaryStyle = val;
+        if (type === 'energy') quizData.peakEnergyWindow = val;
+
+        // Re-render current step to cleanly update visual selected classes & checkmarks
+        updateStepContent();
       });
     });
 
     // Allergy chips toggle (multi-select)
     container.querySelectorAll('.allergy-chip').forEach(chip => {
       chip.addEventListener('click', () => {
+        sound.playTap();
         const id = chip.getAttribute('data-id');
-        let currentAllergies = quizData.allergies || [];
+        let currentAllergies = [...(quizData.allergies || [])];
         if (currentAllergies.includes(id)) {
           currentAllergies = currentAllergies.filter(item => item !== id);
         } else {
@@ -357,6 +403,7 @@ export function renderQuizView(container) {
 
     // Back button
     btnPrev?.addEventListener('click', () => {
+      sound.playTap();
       if (currentQuizStep > 1) {
         currentQuizStep--;
         updateStepContent();
@@ -365,17 +412,19 @@ export function renderQuizView(container) {
 
     // Next / Complete button
     btnNext?.addEventListener('click', () => {
+      sound.playTap();
       if (currentQuizStep < TOTAL_STEPS) {
         currentQuizStep++;
         updateStepContent();
       } else {
-        // Finish Quiz -> Trigger Animated AI Synthesis Screen
+        // Finish Quiz -> Trigger Animated AI Synthesis Screen -> Enters Step 3: Home Dashboard!
         showAiSynthesisScreen();
       }
     });
   }
 
   function showAiSynthesisScreen() {
+    sound.playGo();
     container.innerHTML = `
       <div class="min-h-screen flex flex-col justify-center items-center p-6 bg-slate-950 text-slate-100 text-center relative overflow-hidden">
         <div class="w-24 h-24 rounded-3xl bg-gradient-to-tr from-emerald-400 to-cyan-400 p-0.5 animate-pulse-ring mb-6">
@@ -387,7 +436,7 @@ export function renderQuizView(container) {
           </div>
         </div>
 
-        <h2 class="text-2xl font-extrabold text-white mb-2">Calibrating Your AI Engine</h2>
+        <h2 class="text-2xl font-extrabold text-white mb-2">Calibrating Fit AI App Engine</h2>
         <p id="synthesis-status-text" class="text-sm text-emerald-400 font-mono mb-6">Analyzing metabolic BMR & TDEE...</p>
 
         <!-- Progress Steps Animation -->
@@ -415,18 +464,18 @@ export function renderQuizView(container) {
         step2.className = "flex items-center gap-2 text-emerald-400";
         step2.innerHTML = "<span>✓</span> <span>Optimizing Pre/Post-Workout Carb Splits</span>";
       }
-    }, 900);
+    }, 800);
 
     setTimeout(() => {
-      if (statusText) statusText.textContent = "Personalizing AI Coach prompts & routines...";
+      if (statusText) statusText.textContent = "Personalizing Fit AI Coach prompts & routines...";
       if (step3) {
         step3.className = "flex items-center gap-2 text-emerald-400";
         step3.innerHTML = "<span>✓</span> <span>Synthesizing Adaptive 7-Day Routine</span>";
       }
-    }, 1800);
+    }, 1600);
 
     setTimeout(() => {
-      // Calculate and save finalized profile
+      // Calculate and save finalized profile -> Proceed to Step 3: Home Dashboard
       const targets = calculateMetabolicTargets(quizData);
       store.updateProfile({
         ...quizData,
@@ -436,11 +485,8 @@ export function renderQuizView(container) {
       });
       store.setAuthMode('app');
       store.setTab('home');
-    }, 2700);
+    }, 2400);
   }
 
-  function selectGoal(goalId) {
-  quizData.primaryGoal = goalId;
   updateStepContent();
-  }
 }

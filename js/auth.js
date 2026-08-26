@@ -1,8 +1,8 @@
-// FitAI Smart Authentication Screen & Flow Logic
+// Fit AI App Authentication Screen & Flow Logic
 import { store } from './state.js';
 
 export function renderAuthView(container) {
-  const authMode = store.getAuthMode(); // 'login' | 'signup' | 'forgot' | 'splash'
+  const authMode = store.getAuthMode(); // 'login' | 'signup' | 'forgot'
 
   container.innerHTML = `
     <div class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 relative overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100">
@@ -21,7 +21,7 @@ export function renderAuthView(container) {
             </svg>
           </div>
           <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-            FitAI Smart
+            Fit AI App
           </h1>
           <p class="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
             AI-Driven Fitness & Nutrition Intelligence
@@ -30,10 +30,10 @@ export function renderAuthView(container) {
 
         <!-- Dynamic Auth Tabs (Login / Sign Up) -->
         <div class="flex p-1 bg-slate-900/90 rounded-xl border border-slate-800 mb-6">
-          <button id="tab-btn-login" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${authMode !== 'signup' ? 'bg-emerald-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-slate-200'}">
+          <button id="tab-btn-login" class="flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all ${authMode !== 'signup' ? 'bg-emerald-500 text-slate-950 shadow-md font-bold' : 'text-slate-400 hover:text-slate-200'}">
             Log In
           </button>
-          <button id="tab-btn-signup" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${authMode === 'signup' ? 'bg-emerald-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-slate-200'}">
+          <button id="tab-btn-signup" class="flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all ${authMode === 'signup' ? 'bg-emerald-500 text-slate-950 shadow-md font-bold' : 'text-slate-400 hover:text-slate-200'}">
             Sign Up
           </button>
         </div>
@@ -64,14 +64,14 @@ export function renderAuthView(container) {
           <div class="flex-grow border-t border-slate-800"></div>
         </div>
 
-        <!-- Login Form -->
+        <!-- Login Form (Flow: 1. Login -> 2. Quiz -> 3. Home) -->
         <form id="auth-login-form" class="space-y-4 ${authMode === 'signup' ? 'hidden' : 'block'}">
           <div id="login-error" class="hidden p-3 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs font-medium"></div>
 
           <div>
             <label class="block text-xs font-medium text-slate-300 mb-1.5">Email Address</label>
             <div class="relative">
-              <input type="email" id="login-email" required value="alex.rivera@FitAI Smart.ai" placeholder="you@example.com" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
+              <input type="email" id="login-email" required value="alex.rivera@fitai.app" placeholder="you@example.com" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
             </div>
           </div>
 
@@ -83,7 +83,7 @@ export function renderAuthView(container) {
               </button>
             </div>
             <div class="relative">
-              <input type="password" id="login-password" required value="pulse12345" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
+              <input type="password" id="login-password" required value="fitai12345" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
               <button type="button" id="toggle-login-pwd" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 text-xs">
                 Show
               </button>
@@ -96,36 +96,40 @@ export function renderAuthView(container) {
           </div>
 
           <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-sm tracking-wide shadow-lg shadow-emerald-500/25 transition active:scale-[0.98] mt-2">
-            Sign In to FitAI Smart
+            Log In & Start Personalization Quiz →
           </button>
         </form>
 
-        <!-- Sign Up Form -->
+        <!-- Sign Up Form (Flow: 1. Sign Up -> 2. Quiz -> 3. Home) -->
         <form id="auth-signup-form" class="space-y-4 ${authMode === 'signup' ? 'block' : 'hidden'}">
           <div id="signup-error" class="hidden p-3 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs font-medium"></div>
 
           <div>
             <label class="block text-xs font-medium text-slate-300 mb-1.5">Full Name</label>
-            <input type="text" id="signup-name" required placeholder="Marcus Vance" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
+            <input type="text" id="signup-name" required placeholder="Alex Rivera" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
           </div>
 
           <div>
             <label class="block text-xs font-medium text-slate-300 mb-1.5">Email Address</label>
-            <input type="email" id="signup-email" required placeholder="marcus@example.com" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
+            <input type="email" id="signup-email" required placeholder="alex@fitai.app" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
           </div>
 
           <div>
             <label class="block text-xs font-medium text-slate-300 mb-1.5">Password</label>
             <div class="relative">
-              <input type="password" id="signup-password" required placeholder="enter your password" class="w-full px-4 py-3 rounded-xl bg-slate-900/90  text-slate-100 placeholder-slate-500 text-sm focus:outline-none  focus:ring-1 focus:ring-emerald-500 transition">
+              <input type="password" id="signup-password" required placeholder="Create your password" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
               <button type="button" id="toggle-signup-pwd" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 text-xs">
                 Show
               </button>
             </div>
-            
+            <!-- Password Strength Bar -->
+            <div class="h-1 w-full bg-slate-800 rounded-full mt-2 overflow-hidden">
+              <div id="pwd-strength-bar" class="h-full bg-emerald-500 transition-all duration-300 w-1/3"></div>
+            </div>
+          </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1.5">Phone Number <span class="text-slate-500 font-normal">(Optional for SMS alerts)</span></label>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">Phone Number <span class="text-slate-500 font-normal">(Optional for SMS reminders)</span></label>
             <input type="tel" id="signup-phone" placeholder="+1 (555) 000-0000" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
           </div>
 
@@ -137,14 +141,14 @@ export function renderAuthView(container) {
           </div>
 
           <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-sm tracking-wide shadow-lg shadow-emerald-500/25 transition active:scale-[0.98]">
-            Continue to Personalization Quiz →
+            Sign Up & Start Quiz →
           </button>
         </form>
 
         <!-- Quick Instant Demo / Guest Login -->
         <div class="mt-6 pt-4 border-t border-slate-800/80 text-center">
           <button id="btn-quick-demo" class="text-xs text-slate-400 hover:text-emerald-400 font-medium transition flex items-center justify-center gap-1.5 mx-auto">
-            <span>⚡ Instant Demo Mode (Pre-configured Profile)</span>
+            <span>⚡ Guest Mode (Go directly to Quiz)</span>
           </button>
         </div>
 
@@ -160,7 +164,7 @@ export function renderAuthView(container) {
             </svg>
           </div>
           <h3 class="text-lg font-bold text-white mb-1">Reset Password</h3>
-          <p class="text-xs text-slate-400 mb-4">Enter your registered email address and our AI system will send a secure reset link.</p>
+          <p class="text-xs text-slate-400 mb-4">Enter your registered email address and Fit AI App will send a secure reset link.</p>
           <form id="forgot-form" class="space-y-3">
             <input type="email" id="forgot-email" required placeholder="name@example.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500">
             <button type="submit" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-sm transition">
@@ -242,16 +246,15 @@ export function renderAuthView(container) {
     }
   });
 
-  // Social Login buttons (Mock OAuth)
+  // Social Login buttons (Mock OAuth) -> Directs to Step 2: Quiz
   btnGoogle?.addEventListener('click', () => {
     store.updateProfile({
       name: 'Google Athlete',
       email: 'user@gmail.com',
       isLoggedIn: true,
-      hasCompletedQuiz: true
+      hasCompletedQuiz: false
     });
-    store.setAuthMode('app');
-    store.setTab('home');
+    store.setAuthMode('quiz');
   });
 
   btnApple?.addEventListener('click', () => {
@@ -259,31 +262,29 @@ export function renderAuthView(container) {
       name: 'Apple Athlete',
       email: 'athlete@icloud.com',
       isLoggedIn: true,
-      hasCompletedQuiz: true
+      hasCompletedQuiz: false
     });
-    store.setAuthMode('app');
-    store.setTab('home');
+    store.setAuthMode('quiz');
   });
 
-  // Quick Demo Login
+  // Quick Demo Login -> Directs to Step 2: Quiz
   btnQuickDemo?.addEventListener('click', () => {
     store.loginAsGuest();
   });
 
-  // Login Submit
+  // Login Submit -> Directs to Step 2: Quiz
   loginForm?.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = container.querySelector('#login-email').value;
     store.updateProfile({
       email,
       isLoggedIn: true,
-      hasCompletedQuiz: true
+      hasCompletedQuiz: false
     });
-    store.setAuthMode('app');
-    store.setTab('home');
+    store.setAuthMode('quiz');
   });
 
-  // Sign Up Submit -> Takes user to Onboarding Personalization Quiz
+  // Sign Up Submit -> Directs to Step 2: Quiz
   signupForm?.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = container.querySelector('#signup-name').value;

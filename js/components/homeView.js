@@ -1,4 +1,4 @@
-// FitAI Smart Daily Advisor (Home Dashboard)
+// Fit AI App Daily Advisor (Home Dashboard)
 import { store } from '../state.js';
 import { getTimeGreeting } from '../utils/helpers.js';
 import { AI_ENGINE } from '../aiEngine.js';

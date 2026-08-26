@@ -1,17 +1,17 @@
-// FitAI Smart Global Reactive State Management
+// Fit AI App Global Reactive State Management
 import { calculateMetabolicTargets } from './utils/helpers.js';
 
-const STORAGE_KEY = 'FitAI Smart_app_state_v1';
+const STORAGE_KEY = 'fit_ai_app_state_v2';
 
 // Default User Profile
 export const DEFAULT_USER = {
   id: 'usr_demo_01',
   name: 'Alex Rivera',
-  email: 'alex.rivera@FitAI Smart.ai',
-  phone: '+91 ***********',
+  email: 'alex.rivera@fitai.app',
+  phone: '+1 (555) 382-9901',
   avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-  isLoggedIn: false,
-  hasCompletedQuiz: false,
+  isLoggedIn: false, // Default to false so user starts on 1. Login & Signup Page
+  hasCompletedQuiz: false, // Default to false so user progresses to 2. Quiz, then 3. Home
   theme: 'dark', // 'dark' or 'light'
   
   // Biometrics
@@ -37,7 +37,7 @@ export const DEFAULT_USER = {
   readinessScore: 92, // 0 - 100
   fatigueLevel: 'low', // 'fresh' | 'low' | 'moderate' | 'high'
   soundEnabled: true,
-  showTutorial: true,
+  showTutorial: false,
   hasSeenTutorial: false,
   
   // Hydration state for today
@@ -51,7 +51,7 @@ export const DEFAULT_USER = {
     {
       id: 'msg_welcome',
       sender: 'ai',
-      text: "👋 Hey Alex! I'm your FitAI Smart AI Coach. I've tailored today's routine for upper body strength and calibrated your pre-workout carbs. How is your energy feeling right now?",
+      text: "👋 Hey there! I'm your Fit AI Coach. I've tailored today's routine for upper body strength and calibrated your pre-workout carbs. How is your energy feeling right now?",
       timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
       quickSuggestions: [
         "Feeling great, ready to train!",
@@ -67,7 +67,7 @@ export const DEFAULT_USER = {
 export const DEMO_PRESETS = {
   muscle_builder: {
     name: 'Marcus Vance',
-    email: 'marcus@FitAI Smart.ai',
+    email: 'marcus@fitai.app',
     age: 26,
     gender: 'male',
     heightCm: 182,
@@ -84,7 +84,7 @@ export const DEMO_PRESETS = {
   },
   fat_loss_pro: {
     name: 'Elena Rostova',
-    email: 'elena@FitAI Smart.ai',
+    email: 'elena@fitai.app',
     age: 31,
     gender: 'female',
     heightCm: 165,
@@ -101,7 +101,7 @@ export const DEMO_PRESETS = {
   },
   vegan_runner: {
     name: 'Jordan Lee',
-    email: 'jordan@FitAI Smart.ai',
+    email: 'jordan@fitai.app',
     age: 29,
     gender: 'other',
     heightCm: 173,
@@ -122,7 +122,7 @@ class StateManager {
   constructor() {
     this.subscribers = new Set();
     this.currentTab = 'home'; // 'home' | 'workouts' | 'coach' | 'nutrition' | 'profile'
-    this.authMode = 'app'; // 'app' | 'login' | 'signup' | 'forgot' | 'quiz'
+    this.authMode = 'login'; // 'login' | 'signup' | 'forgot' | 'quiz' | 'app'
     this.state = this.loadInitialState();
   }
 
@@ -264,23 +264,26 @@ class StateManager {
         completedScheduleIds: [],
         waterIntakeCurrent: 500
       });
+      this.setAuthMode('app');
+      this.setTab('home');
     }
   }
 
   logout() {
     this.updateProfile({
-      isLoggedIn: false
+      isLoggedIn: false,
+      hasCompletedQuiz: false
     });
     this.setAuthMode('login');
   }
 
   loginAsGuest() {
+    // Directs guest user through 1. Login -> 2. Quiz -> 3. Home
     this.updateProfile({
       isLoggedIn: true,
-      hasCompletedQuiz: true
+      hasCompletedQuiz: false
     });
-    this.setAuthMode('app');
-    this.setTab('home');
+    this.setAuthMode('quiz');
   }
 }
 

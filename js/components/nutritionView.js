@@ -1,4 +1,4 @@
-// FitAI Smart Proactive Nutrition & Meal Assistant
+// Fit AI App Proactive Nutrition & Meal Assistant
 import { store } from '../state.js';
 import { AI_ENGINE } from '../aiEngine.js';
 import { sound } from '../utils/audio.js';

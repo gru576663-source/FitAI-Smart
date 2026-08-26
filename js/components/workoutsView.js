@@ -1,4 +1,4 @@
-// FitAI Smart Workouts Tab & Interactive AI Workout Runner
+// Fit AI App Workouts Tab & Interactive AI Workout Runner
 import { store } from '../state.js';
 import { AI_ENGINE } from '../aiEngine.js';
 import { sound } from '../utils/audio.js';
