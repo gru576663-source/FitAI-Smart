@@ -1,0 +1,20 @@
+# Secrets and local environment settings
+.env
+.env.*
+!.env.example
+
+# Installed dependencies
+node_modules/
+
+# Editor and operating-system files
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Android local/build output
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+*.keystore
+*.jks

@@ -603,7 +603,7 @@ async processCoachQuery(query, userProfile = {}, onTokenCallback = null) {
 
     const data = await response.json();
 
-    const fullResponse = data.text || "Sorry, I couldn't generate a response.";
+    const fullResponse = data.reply || data.text || "Sorry, I couldn't generate a response.";
 
     const quickSuggestions = data.quickSuggestions || [
       "What should I workout today?",
@@ -645,6 +645,6 @@ async processCoachQuery(query, userProfile = {}, onTokenCallback = null) {
         "Suggest a routine"
       ]
     };
-   }
- }
+  }
+}
 }
